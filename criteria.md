@@ -25,7 +25,7 @@ contains the answer.
 **Why this target:**
 <!-- e.g. "One of my questions is about a topic only two documents mention, so
      I expect that one to be hard." -->
-
+Some of my questions are a little harder to answer.
 ---
 
 ## 2. Every answer names a source
@@ -35,6 +35,7 @@ Every answer the system produces names at least one source document.
 **Why this target:**
 <!-- Why all five and not four? What about your setup makes that achievable —
      or what would have to go wrong for it not to be? -->
+We should ensure that the system produces output that is rooted in fact and is not hallucinating answers. It would have to generate its own answers if it wasn't producing a valid source document.
 
 ---
 
@@ -68,11 +69,12 @@ in at least 4 of 5 tries.
           sentence cut in half at either end."
        - "No chunk is shorter than 200 characters, since anything below that
           in my corpus turned out to be a heading with no content under it." -->
-
+The sampled chunks are complete and are not either too long or cutting off random information.
 
 
 **Why this target:**
 
+It is crucial for the chunks to be readable and have a valid response.
 
 
 ---
@@ -86,12 +88,12 @@ in at least 4 of 5 tries.
      handles badly, about source attribution being correct rather than merely
      present — anything, as long as it names a number or an observable
      outcome. -->
-
+When I ask a question, it correctly attributes the output to a source for 4 out of 5 test quesitons.
 
 
 **Why this target:**
 
-
+Having a correct source and reference material is extremely important, yet could be understandable if it is incorrect sometimes and the source is just minorly related.
 
 ---
 
