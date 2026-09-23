@@ -22,6 +22,7 @@ to it, write down what you saw, and move on. That's a real observation about
 your pipeline, not giving up.
 """
 
+import re
 from dataclasses import dataclass
 
 import config
@@ -82,22 +83,59 @@ def fallback_split(
 
 def split_documents(documents: list[Document]) -> list[Chunk]:
     """
-    Split documents into chunks. ⚠️ REPLACE THE BODY OF THIS IN MILESTONE 3.
-
-    Right now it just calls the fallback. That is the plain, generic behaviour
-    the brief is talking about.
-
-    When you write your own strategy, set `produced_by` to
-    "chunker.py::split_documents" so your README's Sample Chunks section names
-    the right function. `app.py chunks` prints that string for you.
-
-    Things worth thinking about before you write any code:
-      - Are your documents short posts or long guides?
-      - Is the useful information in one sentence, or spread over a paragraph?
-      - Would splitting on paragraph breaks keep more thoughts intact than
-        splitting on a character count?
+    Split on paragraph breaks (blank lines).
+ 
+    Each file is a sequence of short posts, one per paragraph, separated by
+    a blank line. That paragraph boundary is where one post ends and the
+    next begins, so each paragraph becomes exactly one chunk — no merging
+    short posts together, no fixed-size windows cutting a post in half.
+    This is why `campus_life` comes out as one chunk per post instead of
+    the 88-documents-in/88-chunks-out no-op the fallback produces on it.
+ 
+    The first line of each file is context that applies to every post in
+    it (e.g. "PHYS 130 Mechanics — assessment"), not a post of its own. It
+    gets prepended to every chunk from that file so a chunk is never read
+    without knowing which course/topic it belongs to.
     """
-    return fallback_split(documents)
+    chunks: list[Chunk] = []
+    for doc in documents:
+        header, _, body = doc.text.partition("\n")
+        header = header.strip()
+ 
+        # Split the remaining text on one or more blank lines (tolerates
+        # trailing whitespace on the "blank" line itself).
+        paragraphs = re.split(r"\n\s*\n", body)
+ 
+        index = 0
+        for paragraph in paragraphs:
+            piece = paragraph.strip()
+            if not piece:
+                continue
+            text = f"{header}\n\n{piece}" if header else piece
+            chunks.append(
+                Chunk(
+                    text=text,
+                    source=doc.source,
+                    index=index,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+            index += 1
+ 
+        # A file that's only a header line, with no body paragraphs, still
+        # becomes one chunk rather than vanishing silently.
+        if not chunks or chunks[-1].source != doc.source:
+            if header:
+                chunks.append(
+                    Chunk(
+                        text=header,
+                        source=doc.source,
+                        index=0,
+                        produced_by="chunker.py::split_documents",
+                    )
+                )
+ 
+    return chunks
 
 
 def describe(chunks: list[Chunk]) -> str:
