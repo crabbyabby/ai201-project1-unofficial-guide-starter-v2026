@@ -26,6 +26,7 @@
      this repo.
 
      Milestone 5. -->
+I picked the corpus about university / campus lifestyle with student answers to student questions. It answers questions about the college campus life, specifically questions about the admin, courses, dining, housing, and studying as well as other miscellaneous topics. This system is able to answer questions regarding campus lifestyles.
 
 ## Chunking Strategy
 
@@ -42,6 +43,8 @@
 
      Milestone 3. -->
 
+Chunked by paragraph, not by chunk size with no overlap. It keeps the "metadata" at the top of each file in each chunk, as each paragraph / sentence is a seperate thought.
+
 ## Sample Chunks
 
 <!-- Five chunks, pasted as text. Label each one and name the file it came from
@@ -52,6 +55,7 @@
      across.
 
      Milestone 3. -->
+     
 
 26 chunks total
 ======================================================================
@@ -74,29 +78,79 @@ If you do get one, the campus does free registration and it's the only reason I 
 For each one, ask: could someone answer a question using only this,
 without reading what came before or after?
 
-**Chunk 1** — source: `` — produced by: ``
+======================================================================
+Chunk 1  |  source: admin_add_drop_deadline.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+On the add/drop deadline
+
+======================================================================
+Chunk 2  |  source: course_cs_210_workload.txt#2  |  produced by: chunker.py::split_documents
+======================================================================
+It's front-loaded — the first month is heavier than the rest, partly because you're learning the format.
+
+======================================================================
+Chunk 3  |  source: course_phys_130.txt#3  |  produced by: chunker.py::split_documents
+======================================================================
+The one piece of advice: the lab practical is worth 20% and almost nobody prepares for it.
+
+======================================================================
+Chunk 4  |  source: dining_verrill_street_grill.txt#1  |  produced by: chunker.py::split_documents
+======================================================================
+I'm a junior and I've done this twice now. Wait times: up to 30 minutes on Friday evenings, otherwise under 10. The thing worth going for is the burger, which is the only late-night hot food on campus. The thing to know is that one register, so the queue is a single line no matter how busy.
+
+======================================================================
+Chunk 5  |  source: housing_morrow_house.txt#2  |  produced by: chunker.py::split_documents
+======================================================================
+The good: cheapest housing tier by about $900 a year, and the singles are real singles.
+
+For each one, ask: could someone answer a question using only this,
+without reading what came before or after?
+(.venv) abigaillei@Abigails-MacBook-Air-566 ai201-project1-unofficial-guide-starter-v2026 % python app.py chunks
+183 chunks total. Showing 5, spread across the corpus.
+
+Paste these into your README under Sample Chunks. The rubric asks
+for the source file and the function that produced them — both are
+printed for you below.
+
+
+**Chunk 1** — source: admin_add_drop_deadline.txt#0`` — produced by: chunker.py::split_documents ``
 
 ```
+On the add/drop deadline
+
+You can add a course through the end of the second week. Dropping is a longer window — through the end of week six — but a drop after week two shows as a W on your transcript. Nothing anywhere on the registrar's site says this plainly, and students find out from each other.
 ```
 
-**Chunk 2** — source: `` — produced by: ``
+**Chunk 2** — source: course_cs_340_exams.txt#1`` — produced by: chunker.py::split_documents ``
 
 ```
+CS 340 Databases — assessment
+
+Start the term project in week three, not week eight; everyone learns this the hard way.
 ```
 
-**Chunk 3** — source: `` — produced by: ``
+**Chunk 3** — source: course_phys_130_workload.txt#0`` — produced by: chunker.py::split_documents ``
 
 ```
+Workload for PHYS 130 Mechanics
+
+People keep asking so: 7 hours a week, plus 3 on lab weeks. That's real time, not optimistic time.
 ```
 
-**Chunk 4** — source: `` — produced by: ``
+**Chunk 4** — source: dining_verrill_street_grill_followup.txt#1`` — produced by: chunker.py::split_documents ``
 
 ```
+Re: Verrill Street Grill
+
+Also worth saying: one register, so the queue is a single line no matter how busy. Nobody tells you this at orientation.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 5** — source: housing_morrow_house.txt#1`` — produced by: chunker.py::split_documents ``
 
 ```
+Morrow House — what it's actually like
+
+The good: cheapest housing tier by about $900 a year, and the singles are real singles.
 ```
 
 ## Sample Answer
@@ -105,14 +159,18 @@ without reading what came before or after?
      visible. Milestone 4. -->
 
 **Question:**
-
+"How much money do students recieve a year for printing"
 **Answer:**
 
 ```
+Students get $30 of printing per semester. 
+
+Source: admin_printing_quota.txt
 ```
 
 **My relevance cutoff:**
 
+0.6. This allowed it to still answer questions it had the answer to while ignoring questions it couldn't. For example, it correcly answered one question with a distance of 0.58, indicating that though its relatively low confidence, it was still able to answer effectively.
 <!-- The number you set in config.py, and how you got there.
 
      You ran five questions your corpus covers and the five in OUT_OF_SCOPE
@@ -124,7 +182,7 @@ without reading what came before or after?
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| "Which class has the highest curve?" |  Yes | 0.581 |
 
 ## How I Used AI
 
@@ -138,8 +196,9 @@ without reading what came before or after?
      Milestone 5. -->
 
 **1.**
-
+I asked Claude to help write the chunking functions that I designed and gave it specific guidelines. After it didn't work the first time, I iterated again and asked it to add the first line to each chunk.
 **2.**
+I asked it about the context for the chunks, and it helped me determine how I should best chunk my documents based off of the documents I had.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
